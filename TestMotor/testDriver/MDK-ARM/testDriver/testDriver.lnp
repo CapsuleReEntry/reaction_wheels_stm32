@@ -1,0 +1,24 @@
+--cpu Cortex-M3
+"testdriver\startup_stm32f103xb.o"
+"testdriver\main.o"
+"testdriver\stm32f1xx_it.o"
+"testdriver\stm32f1xx_hal_msp.o"
+"testdriver\stm32f1xx_hal_gpio_ex.o"
+"testdriver\stm32f1xx_hal_tim.o"
+"testdriver\stm32f1xx_hal_tim_ex.o"
+"testdriver\stm32f1xx_hal.o"
+"testdriver\stm32f1xx_hal_rcc.o"
+"testdriver\stm32f1xx_hal_rcc_ex.o"
+"testdriver\stm32f1xx_hal_gpio.o"
+"testdriver\stm32f1xx_hal_dma.o"
+"testdriver\stm32f1xx_hal_cortex.o"
+"testdriver\stm32f1xx_hal_pwr.o"
+"testdriver\stm32f1xx_hal_flash.o"
+"testdriver\stm32f1xx_hal_flash_ex.o"
+"testdriver\stm32f1xx_hal_exti.o"
+"testdriver\system_stm32f1xx.o"
+"testdriver\stepmotor.o"
+--strict --scatter "testDriver\testDriver.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "testDriver.map" -o testDriver\testDriver.axf

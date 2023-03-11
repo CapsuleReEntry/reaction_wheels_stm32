@@ -1,0 +1,25 @@
+--cpu Cortex-M3
+"mpu_keil\startup_stm32f103xb.o"
+"mpu_keil\main.o"
+"mpu_keil\stm32f1xx_it.o"
+"mpu_keil\stm32f1xx_hal_msp.o"
+"mpu_keil\mpu6050.o"
+"mpu_keil\stm32f1xx_hal_gpio_ex.o"
+"mpu_keil\stm32f1xx_hal_i2c.o"
+"mpu_keil\stm32f1xx_hal.o"
+"mpu_keil\stm32f1xx_hal_rcc.o"
+"mpu_keil\stm32f1xx_hal_rcc_ex.o"
+"mpu_keil\stm32f1xx_hal_gpio.o"
+"mpu_keil\stm32f1xx_hal_dma.o"
+"mpu_keil\stm32f1xx_hal_cortex.o"
+"mpu_keil\stm32f1xx_hal_pwr.o"
+"mpu_keil\stm32f1xx_hal_flash.o"
+"mpu_keil\stm32f1xx_hal_flash_ex.o"
+"mpu_keil\stm32f1xx_hal_exti.o"
+"mpu_keil\stm32f1xx_hal_tim.o"
+"mpu_keil\stm32f1xx_hal_tim_ex.o"
+"mpu_keil\system_stm32f1xx.o"
+--strict --scatter "MPU_KEIL\MPU_KEIL.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "MPU_KEIL.map" -o MPU_KEIL\MPU_KEIL.axf
