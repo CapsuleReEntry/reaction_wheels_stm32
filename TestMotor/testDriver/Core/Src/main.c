@@ -68,6 +68,15 @@ static void MX_GPIO_Init();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int16_t State_Matrix [6][3] =
+/*{+, -, N/C}*/ ///<- First, Second< third 
+{{1,2,3},
+ {1,3,2},
+ {2,3,1},
+ {2,1,3},
+ {3,1,2},
+ {3,2,1},
+};
 
 /* USER CODE END 0 */
 
@@ -78,7 +87,7 @@ static void MX_GPIO_Init();
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  State_Matrix [0][0] = 
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -114,7 +123,7 @@ int main(void)
   {
 		/**Simple collector move*/
 	  uint32_t startTime = HAL_GetTick();
-		SimpleDirR(3);
+		SimpleDirR(5);
   }
   /* USER CODE END 3 */
 }
@@ -288,7 +297,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void SwitchRealState(int16_t *massive) {
+if (*massive
+}
 /* USER CODE END 4 */
 
 /**
