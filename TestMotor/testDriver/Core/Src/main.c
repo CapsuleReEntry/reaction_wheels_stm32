@@ -30,6 +30,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "Coil_manager.h"
 void doOneStep(int);
 void doOtherStep(int);
 void SimpleDirR(uint32_t delay);
@@ -70,12 +71,12 @@ static void MX_GPIO_Init();
 /* USER CODE BEGIN 0 */
 int16_t State_Matrix [6][3] =
 /*{+, -, N/C}*/ ///<- First, Second< third 
-{{1,2,3},
- {1,3,2},
- {2,3,1},
- {2,1,3},
- {3,1,2},
- {3,2,1},
+{{1,-1,0},
+ {1,0,-1},
+ {0,1,-1},
+ {-1,1,0},
+ {-1,0,1},
+ {0,-1,1},
 };
 
 /* USER CODE END 0 */
@@ -87,7 +88,6 @@ int16_t State_Matrix [6][3] =
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  State_Matrix [0][0] = 
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -109,12 +109,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-	HAL_GPIO_WritePin(GPIOB,Q1,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB,Q2,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB,Q3,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB,Q4,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB,Q5,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB,Q6,GPIO_PIN_RESET);
+	Connect_Disable_all_Coil();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -122,8 +117,18 @@ int main(void)
   while (1)
   {
 		/**Simple collector move*/
-	  uint32_t startTime = HAL_GetTick();
-		SimpleDirR(5);
+	 Connect_Coil1_Coil2_Coil3();
+	 HAL_Delay(1);
+	 Connect_Coil1_Coil3_Coil2();
+	 HAL_Delay(1);
+	 Connect_Coil2_Coil3_Coil1();
+	 HAL_Delay(1);
+	 Connect_Coil2_Coil1_Coil3();
+	 HAL_Delay(1);	
+	 Connect_Coil3_Coil1_Coil2();
+	 HAL_Delay(1);
+	 Connect_Coil3_Coil2_Coil1();
+	 HAL_Delay(1);
   }
   /* USER CODE END 3 */
 }
@@ -297,9 +302,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void SwitchRealState(int16_t *massive) {
-if (*massive
-}
+
 /* USER CODE END 4 */
 
 /**
