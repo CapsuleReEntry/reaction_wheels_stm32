@@ -16,24 +16,24 @@
 // MPU6050 structure
 typedef struct {
 
-    int16_t Accel_X_RAW;
-    int16_t Accel_Y_RAW;
-    int16_t Accel_Z_RAW;
-    double Ax;
-    double Ay;
-    double Az;
+   // int16_t Accel_X_RAW;
+ //   int16_t Accel_Y_RAW;
+ //   int16_t Accel_Z_RAW;
+   // double Ax;
+   // double Ay;
+  //  double Az;
 
     int16_t Gyro_X_RAW;
     int16_t Gyro_Y_RAW;
     int16_t Gyro_Z_RAW;
-    double Gx;
-    double Gy;
-    double Gz;
+ //   double Gx;
+ //   double Gy;
+  //  double Gz;
 
-    float Temperature;
+    int16_t Temperature;
 
-    double KalmanAngleX;
-    double KalmanAngleY;
+  //  double KalmanAngleX;
+  //  double KalmanAngleY;
 } MPU6050_t;
 
 

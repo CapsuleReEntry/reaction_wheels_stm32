@@ -18,7 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "mpu6050.h"
+
+#define START_ADDRS_FLASH_MPU 0x08005000
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -39,8 +42,17 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c1;
 
+UART_HandleTypeDef huart1;
+
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
  MPU6050_t MPU6050;
 /* USER CODE END PV */
@@ -49,6 +61,9 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART1_UART_Init(void);
+void StartDefaultTask(void *argument);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -87,17 +102,52 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  while (MPU6050_Init(&hi2c1) == 1);
+ // while (MPU6050_Init(&hi2c1) == 1);
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    MPU6050_Read_Temp(&hi2c1, &MPU6050);
-		HAL_Delay(1000);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -122,7 +172,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -173,6 +222,39 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 9600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -190,6 +272,97 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+	uint8_t Flag = 0x00;
+	uint32_t Addres_Write = START_ADDRS_FLASH_MPU;
+	uint8_t WriteVal = 0;
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+		Flag |= MPU6050_Init(&hi2c1);
+		
+	FLASH_EraseInitTypeDef Settings_Flash_data;
+	Settings_Flash_data.Banks = FLASH_BANK_1;
+	Settings_Flash_data.NbPages = 1;
+	Settings_Flash_data.PageAddress = START_ADDRS_FLASH_MPU;
+	Settings_Flash_data.TypeErase = FLASH_TYPEERASE_PAGES;
+//  /* USER CODE BEGIN 5 */
+//	Flag |= HAL_FLASH_Unlock();
+//	uint32_t page_error = 0; // ??????????, ? ??????? ????????? ????? ???????? ??? ????????? ????????
+//	Flag |= HAL_FLASHEx_Erase(&Settings_Flash_data, &page_error);
+//	
+//	
+//  uint32_t address = 0x08003000; // ?????? ? ?????? ???????? 127
+//  uint16_t idata[] = {0x1941, 0x1945};    // ?????? ?? ???? ????? ??? ??????
+//	
+//	
+//	for(uint8_t i = 0; i < 2; i++) {
+//		Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, address+i*4, idata[i]);
+//	}
+//	Flag |= HAL_FLASH_Lock();
+//	char *PtrCh = "Hello!";
+
+
+
+  /* Infinite loop */
+  for(;;)
+  {
+		static uint32_t tmpIndex[113];
+		static uint16_t tmpTemp[113];
+		static uint32_t tmpX[113];
+		static uint16_t tmpY[113];
+		static uint16_t tmpZ[113];
+		for(uint16_t i = 0; i<113; i++){
+			MPU6050_Read_Gyro(&hi2c1, &MPU6050);
+			MPU6050_Read_Temp(&hi2c1, &MPU6050);
+			tmpIndex[i] = i;
+			tmpTemp[i] = MPU6050.Temperature;
+			tmpX[i] = MPU6050.Gyro_X_RAW;
+			tmpY[i] = MPU6050.Gyro_Y_RAW;
+			tmpZ[i] = MPU6050.Gyro_Z_RAW;
+			osDelay(10);
+		}
+		Flag |= HAL_FLASH_Unlock();
+		uint32_t page_error = 0;
+   	Flag |= HAL_FLASHEx_Erase(&Settings_Flash_data, &page_error);
+		uint32_t Addr = START_ADDRS_FLASH_MPU;
+		uint16_t i = 0;
+		while(Addr < (START_ADDRS_FLASH_MPU + 0x7FF)) { //0x7ff -2 kbytes ore one page
+//			Addres_Write += i;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, tmpIndex[i]);
+				Addr+=4;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, tmpTemp[i]);
+				Addr+=4;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, tmpX[i]);
+				Addr+=4;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, tmpY[i]);
+				Addr+=4;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, tmpZ[i]);
+				Addr+=4;
+				Flag |= HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, Addr, '\n');
+				Addr+=4;
+				++i;
+		}		
+		Flag |= HAL_FLASH_Lock();
+		Addr = START_ADDRS_FLASH_MPU;
+		while(Addr < (START_ADDRS_FLASH_MPU + 0x7FF)) {
+			Flag |= HAL_FLASH_Unlock();
+			WriteVal = *(uint8_t*)Addr;
+			Flag |= HAL_FLASH_Unlock();
+			HAL_UART_Transmit(&huart1, &WriteVal, sizeof(uint8_t),100);
+			Addr +=4;
+		  osDelay(100);
+		}
+	
+	}
+  /* USER CODE END 5 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -222,3 +395,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+

@@ -26,4 +26,14 @@ mpu_keil\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 mpu_keil\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 mpu_keil\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
 mpu_keil\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+mpu_keil\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+mpu_keil\main.o: ../Core/Inc/FreeRTOSConfig.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/portmacro.h
+mpu_keil\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 mpu_keil\main.o: ../Core/Inc/mpu6050.h
